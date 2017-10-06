@@ -28,17 +28,17 @@ int main() {
 
     cv::Mat matClassificationInts;      // these are our training classifications, note we will have to perform some conversions before writing to file later
 
-                                // these are our training images, due to the data types that the KNN object KNearest requires, we have to declare a single Mat,
-                                // then append to it as though it's a vector, also we will have to perform some conversions before writing to file later
+                                        // these are our training images, due to the data types that the KNN object KNearest requires, we have to declare a single Mat,
+                                        // then append to it as though it's a vector, also we will have to perform some conversions before writing to file later
     cv::Mat matTrainingImagesAsFlattenedFloats;
 
-                                // possible chars we are interested in are digits 0 through 9 and capital letters A through Z, put these in vector intValidChars
+    // possible chars we are interested in are digits 0 through 9 and capital letters A through Z, put these in vector intValidChars
     std::vector<int> intValidChars = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-                                       'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
-                                       'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
-                                       'U', 'V', 'W', 'X', 'Y', 'Z' };
+        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
+        'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
+        'U', 'V', 'W', 'X', 'Y', 'Z' };
 
-    imgTrainingNumbers = cv::imread("training_chars.png");          // read in training numbers image
+    imgTrainingNumbers = cv::imread("training_chars2.png");          // read in training numbers image
 
     if (imgTrainingNumbers.empty()) {                               // if unable to open image
         std::cout << "error: image not read from file\n\n";         // show error message on command line
@@ -90,7 +90,8 @@ int main() {
 
             if (intChar == 27) {        // if esc key was pressed
                 return(0);              // exit program
-            } else if (std::find(intValidChars.begin(), intValidChars.end(), intChar) != intValidChars.end()) {     // else if the char is in the list of chars we are looking for . . .
+            }
+            else if (std::find(intValidChars.begin(), intValidChars.end(), intChar) != intValidChars.end()) {     // else if the char is in the list of chars we are looking for . . .
 
                 matClassificationInts.push_back(intChar);       // append classification char to integer list of chars
 
@@ -107,7 +108,7 @@ int main() {
 
     std::cout << "training complete\n\n";
 
-                // save classifications to file ///////////////////////////////////////////////////////
+    // save classifications to file ///////////////////////////////////////////////////////
 
     cv::FileStorage fsClassifications("classifications.xml", cv::FileStorage::WRITE);           // open the classifications file
 
@@ -119,7 +120,7 @@ int main() {
     fsClassifications << "classifications" << matClassificationInts;        // write classifications into classifications section of classifications file
     fsClassifications.release();                                            // close the classifications file
 
-                // save training images to file ///////////////////////////////////////////////////////
+                                                                            // save training images to file ///////////////////////////////////////////////////////
 
     cv::FileStorage fsTrainingImages("images.xml", cv::FileStorage::WRITE);         // open the training images file
 

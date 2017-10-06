@@ -22,7 +22,7 @@ public:
     cv::Rect boundingRect;                      // bounding rect for contour
     float fltArea;                              // area of contour
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////
+                                                ///////////////////////////////////////////////////////////////////////////////////////////////
     bool checkIfContourIsValid() {                              // obviously in a production grade program
         if (fltArea < MIN_CONTOUR_AREA) return false;           // we would have a much more robust function for 
         return true;                                            // identifying if a contour is valid !!
@@ -40,7 +40,7 @@ int main() {
     std::vector<ContourWithData> allContoursWithData;           // declare empty vectors,
     std::vector<ContourWithData> validContoursWithData;         // we will fill these shortly
 
-            // read in training classifications ///////////////////////////////////////////////////
+                                                                // read in training classifications ///////////////////////////////////////////////////
 
     cv::Mat matClassificationInts;      // we will read the classification numbers into this variable as though it is a vector
 
@@ -54,7 +54,7 @@ int main() {
     fsClassifications["classifications"] >> matClassificationInts;      // read classifications section into Mat classifications variable
     fsClassifications.release();                                        // close the classifications file
 
-            // read in training images ////////////////////////////////////////////////////////////
+                                                                        // read in training images ////////////////////////////////////////////////////////////
 
     cv::Mat matTrainingImagesAsFlattenedFloats;         // we will read multiple images into this single image variable as though it is a vector
 
@@ -68,15 +68,15 @@ int main() {
     fsTrainingImages["images"] >> matTrainingImagesAsFlattenedFloats;           // read images section into Mat training images variable
     fsTrainingImages.release();                                                 // close the traning images file
 
-            // train //////////////////////////////////////////////////////////////////////////////
+                                                                                // train //////////////////////////////////////////////////////////////////////////////
 
     cv::Ptr<cv::ml::KNearest>  kNearest(cv::ml::KNearest::create());            // instantiate the KNN object
 
-                // finally we get to the call to train, note that both parameters have to be of type Mat (a single Mat)
-                // even though in reality they are multiple images / numbers
+                                                                                // finally we get to the call to train, note that both parameters have to be of type Mat (a single Mat)
+                                                                                // even though in reality they are multiple images / numbers
     kNearest->train(matTrainingImagesAsFlattenedFloats, cv::ml::ROW_SAMPLE, matClassificationInts);
 
-            // test ///////////////////////////////////////////////////////////////////////////////
+    // test ///////////////////////////////////////////////////////////////////////////////
 
     cv::Mat matTestingNumbers = cv::imread("test1.png");            // read in the test numbers image
 
@@ -92,20 +92,20 @@ int main() {
 
     cv::cvtColor(matTestingNumbers, matGrayscale, CV_BGR2GRAY);         // convert to grayscale
 
-                                            // blur
+                                                                        // blur
     cv::GaussianBlur(matGrayscale,              // input image
-                     matBlurred,                // output image
-                     cv::Size(5, 5),            // smoothing window width and height in pixels
-                     0);                        // sigma value, determines how much the image will be blurred, zero makes function choose the sigma value
+        matBlurred,                // output image
+        cv::Size(5, 5),            // smoothing window width and height in pixels
+        0);                        // sigma value, determines how much the image will be blurred, zero makes function choose the sigma value
 
-                                            // filter image from grayscale to black and white
+                                   // filter image from grayscale to black and white
     cv::adaptiveThreshold(matBlurred,                           // input image
-                          matThresh,                            // output image
-                          255,                                  // make pixels that pass the threshold full white
-                          cv::ADAPTIVE_THRESH_GAUSSIAN_C,       // use gaussian rather than mean, seems to give better results
-                          cv::THRESH_BINARY_INV,                // invert so foreground will be white, background will be black
-                          11,                                   // size of a pixel neighborhood used to calculate threshold value
-                          2);                                   // constant subtracted from the mean or weighted mean
+        matThresh,                            // output image
+        255,                                  // make pixels that pass the threshold full white
+        cv::ADAPTIVE_THRESH_GAUSSIAN_C,       // use gaussian rather than mean, seems to give better results
+        cv::THRESH_BINARY_INV,                // invert so foreground will be white, background will be black
+        11,                                   // size of a pixel neighborhood used to calculate threshold value
+        2);                                   // constant subtracted from the mean or weighted mean
 
     matThreshCopy = matThresh.clone();              // make a copy of the thresh image, this in necessary b/c findContours modifies the image
 
@@ -131,18 +131,18 @@ int main() {
             validContoursWithData.push_back(allContoursWithData[i]);            // if so, append to valid contour list
         }
     }
-            // sort contours from left to right
+    // sort contours from left to right
     std::sort(validContoursWithData.begin(), validContoursWithData.end(), ContourWithData::sortByBoundingRectXPosition);
 
     std::string strFinalString;         // declare final string, this will have the final number sequence by the end of the program
 
     for (int i = 0; i < validContoursWithData.size(); i++) {            // for each contour
 
-                                                                // draw a green rect around the current char
+                                                                        // draw a green rect around the current char
         cv::rectangle(matTestingNumbers,                            // draw rectangle on original image
-                      validContoursWithData[i].boundingRect,        // rect to draw
-                      cv::Scalar(0, 255, 0),                        // green
-                      2);                                           // thickness
+            validContoursWithData[i].boundingRect,        // rect to draw
+            cv::Scalar(0, 255, 0),                        // green
+            2);                                           // thickness
 
         cv::Mat matROI = matThresh(validContoursWithData[i].boundingRect);          // get ROI image of bounding rect
 
